@@ -721,7 +721,7 @@
     </div>
     <div class="access-feedback" id="accessFeedback">Der Code wird in diesem Browser nur einmal akzeptiert.</div>
 
-    <div class="access-row" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 2rem; display: ${ADMIN_SHOW_PASSWORD_FIELD ? 'flex' : 'none'};">
+    <div class="access-row" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 2rem;" id="adminPasswordRow">
       <input id="adminPasswordInput" class="access-input" type="password" placeholder="Admin-Passwort" aria-label="Admin-Passwort eingeben" style="flex-grow: 1;">
       <button class="access-btn" id="adminSubmitBtn" type="button">Admin</button>
     </div>
@@ -1411,6 +1411,12 @@ function checkAdminPassword() {
 }
 
 function initAccessControls() {
+  // Show admin password field only if ?admin=2006 is in URL
+  const adminPasswordRow = document.getElementById('adminPasswordRow');
+  if (!ADMIN_SHOW_PASSWORD_FIELD) {
+    adminPasswordRow.style.display = 'none';
+  }
+
   document.getElementById('accessSubmitBtn').addEventListener('click', checkAccess);
   document.getElementById('accessCodeInput').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') checkAccess();
