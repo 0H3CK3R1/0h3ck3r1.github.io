@@ -1056,6 +1056,7 @@ const ACCESS_LEGACY_FILE = 'access-code.json';
 const ACCESS_SESSION_KEY = 'besQuizUnlocked';
 const ACCESS_SESSION_CODE_KEY = 'besQuizSessionCode';
 const ACCESS_SESSION_STARTED_KEY = 'besQuizSessionStartedAt';
+const ACCESS_SESSION_STATUS_KEY = 'besQuizSessionStatus';
 const ACCESS_USED_CODES_KEY = 'besQuizUsedCodes';
 const ADMIN_MODE = new URLSearchParams(window.location.search).has('admin');
 
@@ -1226,6 +1227,7 @@ async function loadAccessCodes() {
 function unlockAccess(code) {
   sessionStorage.setItem(ACCESS_SESSION_KEY, '1');
   if (code) sessionStorage.setItem(ACCESS_SESSION_CODE_KEY, code);
+  sessionStorage.setItem(ACCESS_SESSION_STATUS_KEY, 'active');
   document.getElementById('accessGate').classList.add('hidden');
   setAccessFeedback('Quiz freigeschaltet.', 'success');
 }
@@ -1295,6 +1297,14 @@ function initAccessControls() {
 }
 
 function startQuiz() {
+  if (sessionStorage.getItem(ACCESS_SESSION_STATUS_KEY) === 'completed') {
+    sessionStorage.removeItem(ACCESS_SESSION_KEY);
+    setAccessFeedback('Diese Sitzung ist bereits abgeschlossen. Für einen neuen Versuch brauchst du einen neuen Code.', 'error');
+    document.getElementById('accessGate').classList.remove('hidden');
+    document.getElementById('accessCodeInput').focus();
+    return;
+  }
+
   if (!sessionStorage.getItem(ACCESS_SESSION_KEY)) {
     document.getElementById('accessGate').classList.remove('hidden');
     setAccessFeedback('Bitte zuerst den Zugangscode eingeben.', 'error');
@@ -1423,6 +1433,7 @@ function showResult() {
   document.getElementById('quizScreen').style.display = 'none';
   const rs = document.getElementById('resultScreen');
   rs.style.display = 'block';
+  sessionStorage.setItem(ACCESS_SESSION_STATUS_KEY, 'completed');
 
   const total = questions.length;
   const pct = Math.round((score/total)*100);
@@ -1479,6 +1490,7 @@ function restartQuiz() {
   sessionStorage.removeItem(ACCESS_SESSION_KEY);
   sessionStorage.removeItem(ACCESS_SESSION_CODE_KEY);
   sessionStorage.removeItem(ACCESS_SESSION_STARTED_KEY);
+  sessionStorage.removeItem(ACCESS_SESSION_STATUS_KEY);
   lastSessionCode = '';
   quizStartedAt = 0;
   document.getElementById('welcomeScreen').style.display = 'block';
@@ -1492,7 +1504,11 @@ function restartQuiz() {
 initAccessControls();
 populateChips();
 loadAccessCodes().then(() => {
-  if (sessionStorage.getItem(ACCESS_SESSION_KEY)) {
+  if (sessionStorage.getItem(ACCESS_SESSION_STATUS_KEY) === 'completed') {
+    sessionStorage.removeItem(ACCESS_SESSION_KEY);
+    document.getElementById('accessGate').classList.remove('hidden');
+    setAccessFeedback('Diese Sitzung ist bereits abgeschlossen. Bitte einen neuen Code verwenden.', 'error');
+  } else if (sessionStorage.getItem(ACCESS_SESSION_KEY)) {
     document.getElementById('accessGate').classList.add('hidden');
   } else {
     document.getElementById('accessGate').classList.remove('hidden');
