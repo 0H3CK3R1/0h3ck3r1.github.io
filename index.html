@@ -1058,7 +1058,7 @@ const ACCESS_SESSION_CODE_KEY = 'besQuizSessionCode';
 const ACCESS_SESSION_STARTED_KEY = 'besQuizSessionStartedAt';
 const ACCESS_SESSION_STATUS_KEY = 'besQuizSessionStatus';
 const ACCESS_USED_CODES_KEY = 'besQuizUsedCodes';
-const ADMIN_MODE = new URLSearchParams(window.location.search).has('admin');
+const ADMIN_MODE = new URLSearchParams(window.location.search).get('admin') === '2006';
 
 let questions = [];
 let currentIdx = 0;
