@@ -721,7 +721,7 @@
     </div>
     <div class="access-feedback" id="accessFeedback">Der Code wird in diesem Browser nur einmal akzeptiert.</div>
 
-    <div class="access-row" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+    <div class="access-row" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 2rem; display: ${ADMIN_SHOW_PASSWORD_FIELD ? 'flex' : 'none'};">
       <input id="adminPasswordInput" class="access-input" type="password" placeholder="Admin-Passwort" aria-label="Admin-Passwort eingeben" style="flex-grow: 1;">
       <button class="access-btn" id="adminSubmitBtn" type="button">Admin</button>
     </div>
@@ -730,6 +730,12 @@
     <div class="admin-tools" id="adminTools">
       <h3>Admin-Werkzeuge</h3>
       <div class="admin-grid">
+        <div class="admin-card">
+          <div class="admin-label">Quiz-Zugang</div>
+          <div class="admin-actions">
+            <button class="access-btn" id="startQuizAsAdminBtn" type="button" style="background-color: #2ecc71; color: white;">Quiz starten</button>
+          </div>
+        </div>
         <div class="admin-card">
           <div class="admin-label">Code-Pool</div>
           <div class="code-pill" id="adminPoolCount">0 Codes</div>
@@ -1071,6 +1077,8 @@ const CODE_CLAIM_ENDPOINT = 'https://db1quiz.maximilianhergert29.workers.dev/cla
 // Admin mode activated via local password entry (no URL parameter)
 let ADMIN_MODE = false;
 const ADMIN_PASSWORD = '2006';
+// Show password field only if ?admin=2006 is in URL
+const ADMIN_SHOW_PASSWORD_FIELD = new URLSearchParams(window.location.search).get('admin') === '2006';
 
 let questions = [];
 let currentIdx = 0;
@@ -1383,6 +1391,11 @@ function formatElapsedTime(ms) {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} min`;
 }
 
+function startQuizAsAdmin() {
+  if (!ADMIN_MODE) return;
+  unlockAccess('admin-access');
+}
+
 function checkAdminPassword() {
   const entered = document.getElementById('adminPasswordInput').value;
   if (entered !== ADMIN_PASSWORD) {
@@ -1408,11 +1421,15 @@ function initAccessControls() {
     if (event.key === 'Enter') checkAdminPassword();
   });
 
-  if (ADMIN_MODE) {
-    document.getElementById('adminTools').classList.add('visible');
+  if (ADMIN_SHOW_PASSWORD_FIELD) {
+    document.getElementById('startQuizAsAdminBtn').addEventListener('click', startQuizAsAdmin);
     document.getElementById('generatePoolBtn').addEventListener('click', generateNewAccessPool);
     document.getElementById('copyCodeBtn').addEventListener('click', copyCurrentAccessCode);
     document.getElementById('downloadCodeBtn').addEventListener('click', downloadAccessJson);
+  }
+
+  if (ADMIN_MODE) {
+    document.getElementById('adminTools').classList.add('visible');
   }
 }
 
