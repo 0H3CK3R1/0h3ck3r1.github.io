@@ -1059,9 +1059,11 @@ const ACCESS_SESSION_CODE_KEY = 'besQuizSessionCode';
 const ACCESS_SESSION_STARTED_KEY = 'besQuizSessionStartedAt';
 const ACCESS_SESSION_STATUS_KEY = 'besQuizSessionStatus';
 const ACCESS_USED_CODES_KEY = 'besQuizUsedCodes';
+const ACCESS_CLIENT_ID_KEY = 'besQuizClientId';
+const REMOTE_CODE_VALIDATION = true;
+const CODE_CLAIM_ENDPOINT = 'https://db1quiz.maximilianhergert29.workers.dev/claim';
 // IMPORTANT: Admin access requires EXACT match to '2006'
 const ADMIN_MODE = new URLSearchParams(window.location.search).get('admin') === '2006';
-console.log('ADMIN_MODE:', ADMIN_MODE, 'admin param:', new URLSearchParams(window.location.search).get('admin'));
 
 let questions = [];
 let currentIdx = 0;
@@ -1081,6 +1083,54 @@ function readUsedCodes() {
   } catch (error) {
     return [];
   }
+}
+
+function hasRemoteValidationConfig() {
+  return Boolean(
+    CODE_CLAIM_ENDPOINT
+    && !CODE_CLAIM_ENDPOINT.includes('__CLOUDFLARE_WORKER_URL__')
+  );
+}
+
+function getClientId() {
+  const existing = localStorage.getItem(ACCESS_CLIENT_ID_KEY);
+  if (existing) return existing;
+  const created = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  localStorage.setItem(ACCESS_CLIENT_ID_KEY, created);
+  return created;
+}
+
+async function claimCodeRemotely(code) {
+  const response = await fetch(CODE_CLAIM_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      code,
+      clientId: getClientId(),
+      client_id: getClientId()
+    })
+  });
+
+  let payload = {};
+  try {
+    payload = await response.json();
+  } catch (error) {
+    payload = {};
+  }
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      message: payload.message || 'Serverfehler bei der Code-Prüfung.'
+    };
+  }
+
+  return {
+    ok: Boolean(payload.ok),
+    message: payload.message || 'Dieser Code wurde bereits verwendet.'
+  };
 }
 
 function saveUsedCodes(usedCodes) {
@@ -1141,12 +1191,29 @@ function setAccessFeedback(message, kind = '') {
 function renderAdminPoolStats() {
   const display = document.getElementById('adminPoolCount');
   if (!display) return;
+
+  if (REMOTE_CODE_VALIDATION) {
+    display.textContent = `${accessCodes.length} Codes im Pool`;
+    return;
+  }
+
   const usedCodes = getUsedCodeSet();
   const availableCount = accessCodes.filter(code => !usedCodes.has(code)).length;
   display.textContent = `${availableCount} von ${accessCodes.length} Codes frei`;
 }
 
 function updateAdminSelection() {
+  if (REMOTE_CODE_VALIDATION) {
+    accessCode = accessCodes[0] || '';
+    const copyBtn = document.getElementById('copyCodeBtn');
+    if (copyBtn) {
+      copyBtn.disabled = !accessCode;
+      copyBtn.textContent = accessCode ? 'Code kopieren' : 'Keine Codes verfügbar';
+    }
+    renderAdminPoolStats();
+    return accessCode;
+  }
+
   const usedCodes = getUsedCodeSet();
   accessCode = accessCodes.find(code => !usedCodes.has(code)) || '';
   const copyBtn = document.getElementById('copyCodeBtn');
@@ -1237,6 +1304,12 @@ function unlockAccess(code) {
 
 function checkAccess() {
   if (!accessReady) return;
+
+  if (REMOTE_CODE_VALIDATION && !hasRemoteValidationConfig()) {
+    setAccessFeedback('Server-Prüfung ist aktiv, aber die Worker-URL ist noch nicht konfiguriert.', 'error');
+    return;
+  }
+
   const entered = normalizeAccessCode(document.getElementById('accessCodeInput').value);
   if (entered.length !== 6) {
     setAccessFeedback('Bitte genau 6 Ziffern eingeben.', 'error');
@@ -1245,6 +1318,24 @@ function checkAccess() {
 
   if (!accessCodes.includes(entered)) {
     setAccessFeedback('Dieser Code ist nicht gültig.', 'error');
+    return;
+  }
+
+  if (REMOTE_CODE_VALIDATION) {
+    setAccessFeedback('Code wird serverseitig geprüft...');
+    claimCodeRemotely(entered)
+      .then((claimResult) => {
+        if (!claimResult.ok) {
+          setAccessFeedback(claimResult.message || 'Dieser Code wurde bereits verwendet.', 'error');
+          return;
+        }
+
+        accessCode = entered;
+        unlockAccess(entered);
+      })
+      .catch(() => {
+        setAccessFeedback('Codeprüfung nicht erreichbar. Bitte später erneut versuchen.', 'error');
+      });
     return;
   }
 

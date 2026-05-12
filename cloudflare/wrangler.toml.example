@@ -1,0 +1,8 @@
+name = "bes-quiz-claim-code"
+main = "worker.js"
+compatibility_date = "2026-05-12"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bes-quiz-codes"
+database_id = "__YOUR_D1_DATABASE_ID__"
