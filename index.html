@@ -147,7 +147,8 @@
   .flag-img {
     width: 160px;
     height: 106px;
-    object-fit: cover;
+    object-fit: contain;
+    background: #fff;
     border-radius: 10px;
     border: 2px solid rgba(212,168,67,0.3);
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
@@ -499,7 +500,7 @@
 
   <!-- WELCOME SCREEN -->
   <div id="welcomeScreen" class="card welcome">
-    <p>Teste dein Wissen über die Heimatländer unserer Schülerinnen und Schüler. <br><strong>26 Fragen</strong> erwarten dich – Hauptstädte, Sprachen, Geschichte, Geografie, Kultur und mehr.</p>
+    <p>Teste dein Wissen über die Heimatländer unserer Schülerinnen und Schüler. <br><strong>12 Fragen</strong> erwarten dich – darunter auch 3 Schätzfragen rund um unsere BES!</p>
     <div class="country-chips" id="countryChips"></div>
     <button class="start-btn" onclick="startQuiz()">Quiz starten 🚀</button>
   </div>
@@ -682,236 +683,72 @@ const COUNTRIES = [
   { name: 'Nigeria',     flag: 'https://flagcdn.com/w160/ng.png', emoji: '🇳🇬' },
   { name: 'Iran',        flag: 'https://flagcdn.com/w160/ir.png', emoji: '🇮🇷' },
   { name: 'Irak',        flag: 'https://flagcdn.com/w160/iq.png', emoji: '🇮🇶' },
-  { name: 'Lettland',    flag: 'https://flagcdn.com/w160/lv.png', emoji: '🇱🇻' },
-  { name: 'Argentinien', flag: 'https://flagcdn.com/w160/ar.png', emoji: '🇦🇷' },
+  { name: 'Lettland',    flag: 'https://flagcdn.com/w320/lv.png', emoji: '🇱🇻' },
+  { name: 'Argentinien', flag: 'https://flagcdn.com/w320/ar.png', emoji: '🇦🇷' },
   { name: 'Jemen',       flag: 'https://flagcdn.com/w160/ye.png', emoji: '🇾🇪' },
   { name: 'Philippinen', flag: 'https://flagcdn.com/w160/ph.png', emoji: '🇵🇭' },
-  { name: "Elfenbeinküste", flag: 'https://flagcdn.com/w160/ci.png', emoji: '🇨🇮' },
+  { name: "Elfenbeinküste", flag: 'https://flagcdn.com/w320/ci.png', emoji: '🇨🇮' },
+];
+
+// ============================================================
+// BES SCHÄTZFRAGEN
+// ============================================================
+const BES_QUESTIONS = [
+  { country:'BES', isBES: true,
+    question:'Wie oft hat die BBS Wechloy den Integrationspreis der Stadt Oldenburg gewonnen?',
+    correct:'3×', wrong:['1×','2×','5×'],
+    fact:'Die BBS Wechloy wurde mehrfach für ihre herausragende Integrationsarbeit ausgezeichnet.',
+    type:'bes' },
+  { country:'BES', isBES: true,
+    question:'Wie viele Nationen sind aktuell in unserer BES vertreten?',
+    correct:'25 Nationen', wrong:['10 Nationen','15 Nationen','40 Nationen'],
+    fact:'Unsere BES ist ein buntes Miteinander aus Schülerinnen und Schülern vieler Länder der Welt.',
+    type:'bes' },
+  { country:'BES', isBES: true,
+    question:'Wie viele Schüler:innen hat die BES aktuell?',
+    correct:'120 Schüler:innen', wrong:['50 Schüler:innen','80 Schüler:innen','200 Schüler:innen'],
+    fact:'Die BES wächst stetig – herzlich willkommen an alle, die neu dazugekommen sind!',
+    type:'bes' },
 ];
 
 const QUESTION_POOL = [
-  // ══ AFGHANISTAN ══
-  { country:'Afghanistan', question:'Was ist die Hauptstadt von Afghanistan?',
-    correct:'Kabul', wrong:['Kandahar','Herat','Mazar-i-Sharif'],
-    fact:'Kabul liegt im Osten Afghanistans und ist mit über 4 Millionen Einwohnern die größte Stadt des Landes.', type:'capital' },
-  {
-    country: 'Afghanistan', question: 'Welche zwei Sprachen sind Amtssprachen in Afghanistan?',
-    correct: 'Dari & Paschtu', wrong: ['Arabisch & Persisch','Urdu & Dari','Kurdisch & Paschtu'],
-    fact: 'Afghanistan hat zwei Amtssprachen: Dari (eine persische Varietät) und Paschtu.', type: 'language' },
-  { country:'Afghanistan', question:'Welches Gebirge prägt den Großteil Afghanistans?',
-    correct:'Hindukusch', wrong:['Himalaya','Karakorum','Zagros'],
-    fact:'Der Hindukusch durchzieht Afghanistan von Nordost nach Südwest und erreicht Höhen über 7.000 m.', type:'geography' },
-  { country:'Afghanistan', question:'Welches traditionelle Reiterspiel gilt als Nationalsport Afghanistans?',
-    correct:'Buzkaschi', wrong:['Polo','Camel Racing','Kabaddi'],
-    fact:'Buzkaschi ist ein traditionelles Reiterspiel, bei dem Reiter um einen Tierkadaver kämpfen. Es ist der Nationalsport Afghanistans.', type:'culture' },
-  { country:'Afghanistan', question:'Welche Stadt war vor Kabul das kulturelle Zentrum des Mogulreichs?',
-    correct:'Herat', wrong:['Kandahar','Ghazni','Jalalabad'],
-    fact:'Herat war ein bedeutendes kulturelles Zentrum der Timuridenzeit im 15. Jahrhundert und ist bekannt für seine Kunst und Architektur.', type:'history' },
+  { country:'Afghanistan', question:'Welches Gericht ist in Afghanistan ein typisches Festessen?',
+    correct:'Qabuli Palaw (Reis mit Fleisch und Rosinen)', wrong:['Couscous','Pad Thai','Jollof Rice'],
+    fact:'Qabuli Palaw ist das Nationalgericht Afghanistans – würziger Reis mit Lamm, Rosinen und Karotten.', type:'culture' },
 
-  // ══ SYRIEN ══
-  { country:'Syrien', question:'Was ist die Hauptstadt von Syrien?',
-    correct:'Damaskus', wrong:['Aleppo','Homs','Latakia'],
-    fact:'Damaskus gilt als eine der ältesten kontinuierlich bewohnten Städte der Welt.', type:'capital' },
-  { country:'Syrien', question:'Welches Meer grenzt westlich an Syrien?',
+  { country:'Syrien', question:'Welches Meer liegt westlich von Syrien?',
     correct:'Mittelmeer', wrong:['Rotes Meer','Schwarzes Meer','Kaspisches Meer'],
-    fact:'Syrien hat eine rund 180 km lange Küste am Mittelmeer im Westen des Landes.', type:'geography' },
-  { country:'Syrien', question:'Welche antike Stadt in Syrien ist UNESCO-Weltkulturerbe und liegt in der Wüste?',
-    correct:'Palmyra', wrong:['Petra','Jerash','Byblos'],
-    fact:'Palmyra war eine blühende Oasenstadt in der syrischen Wüste und zählt zu den bedeutendsten Ruinenstätten der Antike.', type:'history' },
-  { country:'Syrien', question:'Welchen Fluss teilen Syrien und der Irak als wichtige Wasserquelle?',
-    correct:'Euphrat', wrong:['Tigris','Jordan','Orontes'],
-    fact:'Der Euphrat fließt durch Syrien und den Irak und ist eine der wichtigsten Wasserquellen der Region.', type:'geography' },
-  { country:'Syrien', question:'Womit ist die syrische Küche international besonders bekannt?',
-    correct:'Hummus, Falafel und Kibbeh', wrong:['Sushi und Ramen','Pasta und Pizza','Curry und Naan'],
-    fact:'Die syrische Küche gehört zur levantinischen Küche und ist weltbekannt für Gerichte wie Hummus, Falafel und Baklava.', type:'culture' },
+    fact:'Syrien hat eine rund 180 km lange Küste am Mittelmeer.', type:'geography' },
 
-  // ══ SOMALIA ══
-  { country:'Somalia', question:'Was ist die Hauptstadt von Somalia?',
-    correct:'Mogadischu', wrong:['Hargeisa','Kismayo','Berbera'],
-    fact:'Mogadischu ist die größte Stadt und das wirtschaftliche Zentrum Somalias.', type:'capital' },
-  { country:'Somalia', question:'Auf welchem geografischen Merkmal liegt Somalia?',
-    correct:'Horn von Afrika', wrong:['Kap der Guten Hoffnung','Suezkanal','Nil-Delta'],
-    fact:'Somalia liegt am Horn von Afrika und ist das östlichste Land des afrikanischen Kontinents.', type:'geography' },
-  { country:'Somalia', question:'Welche Sprache wird in Somalia offiziell gesprochen?',
-    correct:'Somali & Arabisch', wrong:['Swahili & Englisch','Amharisch & Somali','Französisch & Arabisch'],
-    fact:'Somali und Arabisch sind die beiden Amtssprachen Somalias.', type:'language' },
-  { country:'Somalia', question:'Wofür war Somalia in den 2000er–2010er Jahren leider bekannt?',
-    correct:'Piraterie am Indischen Ozean', wrong:['Nukleartests in der Sahara','Cyber-Angriffe auf Europa','Raumfahrtprogramm'],
-    fact:'Somalia war bekannt für Piratenangriffe im Golf von Aden. Internationale Marineoperationen reduzierten die Vorfälle stark.', type:'politics' },
-  { country:'Somalia', question:'Welches Tier ist das Nationaltier Somalias?',
-    correct:'Gepard', wrong:['Löwe','Nashorn','Elefant'],
-    fact:'Der Gepard ist das Nationaltier Somalias und eines der schnellsten Landtiere der Erde.', type:'culture' },
+  { country:'Somalia', question:'Was ist Canjeero in der somalischen Küche?',
+    correct:'Ein säuerliches Fladenbrot', wrong:['Ein Fleischeintopf','Ein süßes Dessert','Ein Reiskuchen'],
+    fact:'Canjeero (auch Injera genannt) ist ein fermentiertes, weiches Fladenbrot – Grundnahrungsmittel in Somalia.', type:'culture' },
 
-  // ══ ERITREA ══
-  { country:'Eritrea', question:'Was ist die Hauptstadt von Eritrea?',
-    correct:'Asmara', wrong:['Massawa','Keren','Assab'],
-    fact:'Asmara ist bekannt für seine außergewöhnliche Kolonialarchitektur aus der italienischen Ära.', type:'capital' },
-  { country:'Eritrea', question:'Eritrea erlangte 1993 seine Unabhängigkeit von welchem Land?',
-    correct:'Äthiopien', wrong:['Sudan','Somalia','Dschibuti'],
-    fact:'Nach einem 30-jährigen Unabhängigkeitskrieg wurde Eritrea 1993 unabhängig von Äthiopien.', type:'history' },
-  { country:'Eritrea', question:'An welchem Gewässer liegt Eritrea?',
-    correct:'Rotes Meer', wrong:['Indischer Ozean','Golf von Aden','Mittelmeer'],
-    fact:'Eritrea hat eine lange Küste am Roten Meer, was es strategisch und wirtschaftlich bedeutsam macht.', type:'geography' },
-  { country:'Eritrea', question:'Welche Besonderheit hat Asmaras Architektur laut UNESCO?',
-    correct:'UNESCO-Welterbe für Modernistische Architektur', wrong:['Älteste Moschee Afrikas','Größter Marktplatz Ostafrikas','Höchstgelegene Hauptstadt Afrikas'],
-    fact:'Asmara ist seit 2017 UNESCO-Welterbe wegen seiner gut erhaltenen Architektur des italienischen Modernismus.', type:'culture' },
-  { country:'Eritrea', question:'Wie viele Sprachen hat Eritrea offiziell?',
-    correct:'9 (u.a. Tigrinya & Arabisch)', wrong:['1 (Arabisch)','2 (Tigrinya & Englisch)','3 (Arabisch, Englisch, Französisch)'],
-    fact:'Eritrea hat neun anerkannte Sprachen, darunter Tigrinya als meistgesprochene sowie Arabisch.', type:'language' },
-
-  // ══ UKRAINE ══
-  { country:'Ukraine', question:'Was ist die Hauptstadt der Ukraine?',
-    correct:'Kiew', wrong:['Charkiw','Lemberg','Odessa'],
-    fact:'Kiew (ukrainisch: Kyiv) ist die größte Stadt der Ukraine und eines der wichtigsten Kulturzentren Osteuropas.', type:'capital' },
-  { country:'Ukraine', question:'Welches ist das flächenmäßig größte Land Europas (ohne Russland)?',
-    correct:'Ukraine', wrong:['Frankreich','Deutschland','Schweden'],
-    fact:'Mit 603.550 km² ist die Ukraine das größte Land, das vollständig in Europa liegt.', type:'geography' },
-  { country:'Ukraine', question:'Wofür ist die ukrainische Stadt Tschernobyl bekannt?',
-    correct:'Nuklearkatastrophe 1986', wrong:['Niederlage Napoleons','Unterzeichnung der UN-Charta','Olympische Spiele 1980'],
-    fact:'Am 26. April 1986 ereignete sich im KKW Tschornobylʹ die schlimmste Atomkatastrophe der Geschichte.', type:'history' },
-  { country:'Ukraine', question:'Als was wird die Ukraine oft bezeichnet, weil sie so viel Getreide produziert?',
-    correct:'Kornkammer Europas', wrong:['Ölquelle Osteuropas','Fabrik der EU','Silicon Valley Europas'],
-    fact:'Die Ukraine gehört zu den weltgrößten Weizen- und Maisproduzenten und wird daher als „Kornkammer Europas" bezeichnet.', type:'culture' },
-  { country:'Ukraine', question:'Welche traditionelle ukrainische Suppe wurde 2022 UNESCO-Kulturerbe?',
-    correct:'Borschtsch (Rote-Bete-Suppe)', wrong:['Gulasch','Gazpacho','Minestrone'],
-    fact:'Borschtsch ist die traditionelle ukrainische Rote-Bete-Suppe und seit 2022 offiziell UNESCO-Immaterielles Kulturerbe.', type:'culture' },
-
-  // ══ NIGERIA ══
-  { country:'Nigeria', question:'Was ist die Hauptstadt von Nigeria?',
-    correct:'Abuja', wrong:['Lagos','Kano','Ibadan'],
-    fact:'Abuja ist seit 1991 die Bundeshauptstadt Nigerias – davor war Lagos Hauptstadt.', type:'capital' },
-  { country:'Nigeria', question:'Nigeria ist das bevölkerungsreichste Land auf welchem Kontinent?',
-    correct:'Afrika', wrong:['Asien','Südamerika','Ozeanien'],
-    fact:'Mit über 220 Millionen Einwohnern ist Nigeria das bevölkerungsreichste Land Afrikas.', type:'geography' },
-  { country:'Nigeria', question:'Was ist Nollywood?',
-    correct:'Nigerias Filmindustrie – die zweitgrößte der Welt', wrong:['Nigerias Ölkonzern','Nigerias Fußballliga','Eine Musikproduktionsfirma'],
-    fact:'Nollywood ist die nigerianische Filmindustrie und produziert mehr Filme pro Jahr als Hollywood.', type:'culture' },
-  { country:'Nigeria', question:'Welcher globale Musikstil hat starke Wurzeln in Nigeria?',
-    correct:'Afrobeats', wrong:['Reggae','Cumbia','K-Pop'],
-    fact:'Afrobeats – geprägt durch Stars wie Burna Boy und Wizkid – hat nigerianische Wurzeln und ist heute ein globales Phänomen.', type:'culture' },
-  { country:'Nigeria', question:'An welchem Gewässer liegt die Südküste Nigerias?',
-    correct:'Golf von Guinea (Atlantik)', wrong:['Indischer Ozean','Rotes Meer','Mittelmeer'],
-    fact:'Nigeria grenzt im Süden an den Golf von Guinea, einem Teil des Atlantischen Ozeans.', type:'geography' },
-
-  // ══ IRAN ══
-  { country:'Iran', question:'Was ist die Hauptstadt des Iran?',
-    correct:'Teheran', wrong:['Isfahan','Täbris','Maschhad'],
-    fact:'Teheran ist mit über 9 Millionen Einwohnern die größte Stadt des Iran.', type:'capital' },
-  { country:'Iran', question:'Welche Sprache wird im Iran hauptsächlich gesprochen?',
-    correct:'Persisch (Farsi)', wrong:['Arabisch','Türkisch','Kurdisch'],
-    fact:'Persisch (Farsi) ist die Amtssprache des Iran und gehört zur indo-iranischen Sprachfamilie.', type:'language' },
-  { country:'Iran', question:'Was ist Nowruz im Iran?',
-    correct:'Persisches Neujahr (21. März)', wrong:['Islamisches Opferfest','Geburtstag des Propheten','Revolutionsfeiertag'],
-    fact:'Nowruz ist das persische Neujahr, am Frühlingsanfang gefeiert – eine über 3.000 Jahre alte Tradition.', type:'culture' },
-  { country:'Iran', question:'Wie heißt die antike persische Stätte mit berühmten Säulenruinen?',
-    correct:'Persepolis', wrong:['Babylon','Palmyra','Karnak'],
-    fact:'Persepolis war die Prachthauptstadt des Achämenidenreichs und ist heute UNESCO-Weltkulturerbe.', type:'history' },
-  { country:'Iran', question:'An welchen Gewässern liegt der Iran im Süden?',
-    correct:'Persischer Golf & Golf von Oman', wrong:['Rotes Meer','Kaspisches Meer','Schwarzes Meer'],
-    fact:'Der Iran grenzt im Süden an den Persischen Golf und den Golf von Oman – eine strategisch wichtige Lage.', type:'geography' },
-
-  // ══ IRAK ══
-  { country:'Irak', question:'Was ist die Hauptstadt des Irak?',
-    correct:'Bagdad', wrong:['Basra','Mossul','Erbil'],
-    fact:'Bagdad liegt am Fluss Tigris und war im 8.–9. Jahrhundert eine der größten Städte der Welt.', type:'capital' },
-  { country:'Irak', question:'Zwischen welchen zwei Flüssen liegt der Irak überwiegend?',
-    correct:'Tigris und Euphrat', wrong:['Nil und Jordan','Indus und Ganges','Wolga und Don'],
-    fact:'Das Zweistromland (Mesopotamien) gilt als eine der Wiegen der menschlichen Zivilisation.', type:'geography' },
-  { country:'Irak', question:'Welche antike Hochkultur entstand im heutigen Irak?',
-    correct:'Sumerer und Babylonier', wrong:['Ägypter und Nubier','Griechen und Römer','Perser und Meder'],
-    fact:'Im heutigen Irak entstanden die Sumerer (erste Schrift der Welt!) und das babylonische Reich mit dem Hammurabi-Gesetz.', type:'history' },
-  { country:'Irak', question:'Welche Weltreligion hat nach Mekka/Medina ihre heiligsten Stätten im Irak?',
-    correct:'Islam (Schiiten – Karbala & Nadschaf)', wrong:['Christentum','Judentum','Hinduismus'],
-    fact:'Karbala und Nadschaf im Irak sind die heiligsten Stätten des schiitischen Islams, wohin Millionen pilgern.', type:'culture' },
-  { country:'Irak', question:'Was ist die Kurdische Autonomieregion im Irak?',
-    correct:'Autonome Region mit eigenem Parlament (Hauptstadt Erbil)', wrong:['Unabhängiger Staat','Provinz ohne Autonomie','Von der Türkei verwaltetes Gebiet'],
-    fact:'Die Kurdische Autonomieregion im Nordirak hat seit 1992 ein eigenes Parlament und eine eigene Regierung.', type:'politics' },
-
-  // ══ LETTLAND ══
-  { country:'Lettland', question:'Was ist die Hauptstadt von Lettland?',
-    correct:'Riga', wrong:['Tallinn','Vilnius','Helsinki'],
-    fact:'Riga ist die größte Stadt im Baltikum und bekannt für seine prachtvolle Jugendstilarchitektur.', type:'capital' },
-  { country:'Lettland', question:'Lettland trat 2004 welcher Gemeinschaft bei?',
-    correct:'Europäische Union', wrong:['GUS','OPEC','ASEAN'],
-    fact:'Lettland trat 2004 der EU bei und übernahm 2014 den Euro als Währung.', type:'politics' },
-  { country:'Lettland', question:'Welche zwei baltischen Nachbarländer hat Lettland?',
+  { country:'Lettland', question:'Welche zwei Nachbarländer hat Lettland?',
     correct:'Estland & Litauen', wrong:['Weißrussland & Polen','Finnland & Russland','Schweden & Norwegen'],
-    fact:'Lettland liegt zwischen Estland (Norden) und Litauen (Süden) – zusammen bilden sie das Baltikum.', type:'geography' },
-  { country:'Lettland', question:'Welches Liederfest ist UNESCO-Tradition in Lettland?',
-    correct:'Das Lettische Sängerfest (Dziesmu svētki)', wrong:['Oktoberfest','Karneval von Venedig','Edinburgh Festival'],
-    fact:'Das lettische Sängerfest findet seit 1873 statt und ist UNESCO-Kulturerbe – tausende Chorsänger treten gemeinsam auf.', type:'culture' },
-  { country:'Lettland', question:'An welchem Meer liegt Lettland?',
-    correct:'Ostsee', wrong:['Nordsee','Schwarzes Meer','Weißes Meer'],
-    fact:'Lettland hat eine Küste an der Ostsee und dem Rigaer Meerbusen – historisch bedeutsam für Handel und Seefahrt.', type:'geography' },
+    fact:'Lettland liegt zwischen Estland im Norden und Litauen im Süden.', type:'geography' },
 
-  // ══ ARGENTINIEN ══
-  { country:'Argentinien', question:'Was ist die Hauptstadt von Argentinien?',
-    correct:'Buenos Aires', wrong:['Córdoba','Rosario','Mendoza'],
-    fact:'Buenos Aires bedeutet auf Spanisch „gute Lüfte" und ist die größte Stadt Argentiniens.', type:'capital' },
-  { country:'Argentinien', question:'Wie oft ist Argentinien Fußball-Weltmeister?',
-    correct:'3× (1978, 1986, 2022)', wrong:['2× (1978, 1986)','4×','1× (2022)'],
-    fact:'Argentinien gewann die WM 1978, 1986 (mit Maradona) und 2022 in Katar (mit Messi).', type:'culture' },
-  { country:'Argentinien', question:'Welcher berühmte Tanz kommt ursprünglich aus Argentinien?',
+  { country:'Lettland', question:'Was ist ein typisches lettisches Gericht?',
+    correct:'Rupjmaize (dunkles Roggenbrot)', wrong:['Baguette','Naan','Tortilla'],
+    fact:'Rupjmaize ist ein kräftiges dunkles Roggenbrot – das wichtigste Grundnahrungsmittel in Lettland.', type:'culture' },
+
+  { country:'Argentinien', question:'Welcher Tanz kommt aus Argentinien?',
     correct:'Tango', wrong:['Salsa','Samba','Flamenco'],
     fact:'Der Tango entstand Ende des 19. Jahrhunderts in Buenos Aires und ist heute UNESCO-Kulturerbe.', type:'culture' },
-  { country:'Argentinien', question:'Welches Naturwunder liegt an der Grenze zu Brasilien?',
-    correct:'Iguazú-Wasserfälle', wrong:['Victoria-Fälle','Niagara-Fälle','Angel-Fälle'],
-    fact:'Die Iguazú-Fälle sind UNESCO-Weltnaturerbe und breiter als die Niagara-Fälle.', type:'geography' },
-  { country:'Argentinien', question:'Welcher berühmte Revolutionär wurde in Argentinien geboren?',
-    correct:'Che Guevara', wrong:['Simón Bolívar','Fidel Castro','Hugo Chávez'],
-    fact:'Ernesto "Che" Guevara wurde 1928 in Rosario, Argentinien geboren.', type:'history' },
 
-  // ══ JEMEN ══
-  { country:'Jemen', question:"Was ist die Hauptstadt des Jemen?",
-    correct:"Sana'a", wrong:['Aden','Taizz','Hudaida'],
-    fact:"Sana'a ist eine der ältesten Städte der Welt und steht auf der UNESCO-Welterbeliste.", type:'capital' },
-  { country:'Jemen', question:'An welchem Golf liegt der Jemen im Süden?',
-    correct:'Golf von Aden', wrong:['Persischer Golf','Golf von Oman','Bengalischer Meerbusen'],
-    fact:'Der Jemen grenzt im Süden an den Golf von Aden und im Westen an das Rote Meer.', type:'geography' },
-  { country:'Jemen', question:"Welche Insel im Jemen beherbergt den einzigartigen 'Drachenbaumwald'?",
+  { country:'Jemen', question:'Welche Insel im Jemen hat einen einzigartigen Drachenbaumwald?',
     correct:'Sokotra', wrong:['Sansibar','Madagaskar','Kreta'],
-    fact:'Die Insel Sokotra ist UNESCO-Weltnaturerbe und beherbergt den einzigartigen Drachenblutbaum (Dracaena cinnabari).', type:'geography' },
-  { country:'Jemen', question:'Mit wem ist das antike Marib im Jemen historisch berühmt?',
-    correct:'Königin von Saba & antiker Staudamm', wrong:['Geburtsort Mohammeds','Erste islamische Universität','Zentrum des Byzantinischen Reichs'],
-    fact:'Marib war die Hauptstadt des Reichs von Saba. Der Marib-Damm war eines der Ingenieurwunder der Antike.', type:'history' },
-  { country:'Jemen', question:'Was ist die traditionelle jemenitische Messerwaffe, die Männer am Gürtel tragen?',
-    correct:'Jambiya', wrong:['Khanjar','Kirpan','Kris'],
-    fact:'Die Jambiya ist ein gebogener Dolch, der im Jemen traditionell als Statussymbol am Gürtel getragen wird.', type:'culture' },
+    fact:'Die Insel Sokotra ist UNESCO-Weltnaturerbe und Heimat des Drachenblutbaums (Dracaena cinnabari).', type:'geography' },
 
-  // ══ PHILIPPINEN ══
-  { country:'Philippinen', question:'Was ist die Hauptstadt der Philippinen?',
-    correct:'Manila', wrong:['Cebu City','Davao','Quezon City'],
-    fact:'Manila ist die Hauptstadt, aber Quezon City ist die bevölkerungsreichste Stadt der Philippinen.', type:'capital' },
-  { country:'Philippinen', question:'Aus wie vielen Inseln bestehen die Philippinen (ungefähr)?',
+  { country:'Philippinen', question:'Aus wie vielen Inseln bestehen die Philippinen?',
     correct:'Über 7.000', wrong:['Ca. 1.000','Ca. 3.000','Ca. 500'],
-    fact:'Die Philippinen bestehen aus 7.641 Inseln und gehören zu den größten Archipelen der Welt.', type:'geography' },
-  { country:'Philippinen', question:'Welche Sprache ist neben Filipino Amtssprache der Philippinen?',
-    correct:'Englisch', wrong:['Spanisch','Chinesisch','Indonesisch'],
-    fact:'Die Philippinen haben zwei Amtssprachen: Filipino (basierend auf Tagalog) und Englisch.', type:'language' },
-  { country:'Philippinen', question:'Welches Land kolonialisierte die Philippinen fast 300 Jahre lang?',
-    correct:'Spanien', wrong:['Portugal','Großbritannien','Niederlande'],
-    fact:'Die Philippinen wurden 1565–1898 von Spanien kolonialisiert und nach König Philipp II. benannt.', type:'history' },
-  { country:'Philippinen', question:'Welchem Naturphänomen sind die Philippinen am meisten ausgesetzt?',
-    correct:'Taifune', wrong:['Tornados','Sandstürme','Blizzards'],
-    fact:'Die Philippinen werden jährlich von durchschnittlich 20 Taifunen getroffen – sie liegen im Taifungürtel des Pazifiks.', type:'geography' },
+    fact:'Die Philippinen bestehen aus 7.641 Inseln.', type:'geography' },
 
-  // ══ ELFENBEINKÜSTE ══
-  { country:'Elfenbeinküste', question:"Was ist die offizielle Hauptstadt der Elfenbeinküste?",
-    correct:'Yamoussoukro', wrong:['Abidjan','San-Pédro','Bouaké'],
-    fact:'Yamoussoukro ist die offizielle Hauptstadt, aber Abidjan ist das wirtschaftliche Zentrum.', type:'capital' },
-  { country:'Elfenbeinküste', question:"Welche Sprache ist Amtssprache der Elfenbeinküste?",
-    correct:'Französisch', wrong:['Englisch','Portugiesisch','Arabisch'],
-    fact:'Die Elfenbeinküste ist ein frankophones Land – Französisch ist die offizielle Amts- und Unterrichtssprache.', type:'language' },
-  { country:'Elfenbeinküste', question:'Womit ist die Elfenbeinküste weltweit führender Exporteur?',
+  { country:'Elfenbeinküste', question:'Womit ist die Elfenbeinküste der weltgrößte Exporteur?',
     correct:'Kakao (~40 % der Weltproduktion)', wrong:['Kaffee','Gold','Baumwolle'],
-    fact:'Die Elfenbeinküste produziert rund 40 % des weltweiten Kakaos und ist damit der größte Exporteur der Erde.', type:'culture' },
-  { country:'Elfenbeinküste', question:'Welche beeindruckende Kirche steht in Yamoussoukro?',
-    correct:'Basilika Unserer Lieben Frau des Friedens (größte der Welt)', wrong:['Sagrada Família','Hagia Sophia','Petersdom'],
-    fact:'Die Basilika in Yamoussoukro ist flächenmäßig die größte Kirche der Welt – inspiriert vom Petersdom in Rom.', type:'history' },
-  { country:'Elfenbeinküste', question:'An welchem Ozean liegt die Küste der Elfenbeinküste?',
-    correct:'Atlantik (Golf von Guinea)', wrong:['Indischer Ozean','Pazifik','Rotes Meer'],
-    fact:'Die Elfenbeinküste liegt in Westafrika und grenzt im Süden an den Golf von Guinea, Teil des Atlantischen Ozeans.', type:'geography' },
+    fact:'Die Elfenbeinküste produziert rund 40 % des weltweiten Kakaos.', type:'culture' },
 ];
+
 
 // ============================================================
 // QUIZ STATE
@@ -932,18 +769,8 @@ function shuffle(arr) {
 }
 
 function buildQuestions() {
-  // Two questions per country, randomly chosen from pool, no duplicates
-  const byCountry = {};
-  QUESTION_POOL.forEach(q => {
-    if (!byCountry[q.country]) byCountry[q.country] = [];
-    byCountry[q.country].push(q);
-  });
-  const picked = [];
-  COUNTRIES.forEach(c => {
-    const pool = shuffle(byCountry[c.name] || []);
-    picked.push(...pool.slice(0, 2));
-  });
-  return shuffle(picked);
+  // Alle 9 Länderfragen + 3 BES-Fragen = genau 12, zufällig gemischt
+  return shuffle([...QUESTION_POOL, ...BES_QUESTIONS]);
 }
 
 // Populate country chips in welcome screen
@@ -968,7 +795,7 @@ function startQuiz() {
 }
 
 function typeLabel(t) {
-  const map = { capital:'🏛 Hauptstadt', geography:'🗺 Geografie', language:'💬 Sprache', history:'📜 Geschichte', culture:'🎭 Kultur', politics:'⚖️ Politik' };
+  const map = { capital:'🏛 Hauptstadt', geography:'🗺 Geografie', language:'💬 Sprache', history:'📜 Geschichte', culture:'🎭 Kultur', politics:'⚖️ Politik', food:'🍽 Essen', clothing:'👘 Kleidung', bes:'⭐ BES-Frage' };
   return map[t] || t;
 }
 
@@ -982,10 +809,12 @@ function renderQuestion() {
   document.getElementById('scoreText').textContent = `${score} Punkt${score!==1?'e':''}`;
   document.getElementById('progressBar').style.width = `${(currentIdx/total)*100}%`;
 
-  // Flag
+  // Flag / BES badge
   const flagContainer = document.getElementById('flagContainer');
   const country = COUNTRIES.find(c => c.name === q.country);
-  if (country) {
+  if (q.isBES) {
+    flagContainer.innerHTML = '<div class="flag-placeholder" style="font-size:2.8rem;background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.5);">🏫</div>';
+  } else if (country) {
     const img = document.createElement('img');
     img.className = 'flag-img';
     img.src = country.flag;
