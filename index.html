@@ -473,11 +473,278 @@
     font-size: 0.8rem;
     color: var(--text-muted);
   }
+  /* ---- PRIZES ---- */
+  .prizes-box {
+    background: linear-gradient(135deg, rgba(212,168,67,0.08), rgba(212,168,67,0.04));
+    border: 1px solid rgba(212,168,67,0.3);
+    border-radius: 16px;
+    padding: 18px 22px;
+    margin: 0 auto 24px;
+    max-width: 380px;
+    width: 100%;
+  }
+  .prizes-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    text-align: center;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .prize-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(212,168,67,0.1);
+  }
+  .prize-item:last-child { border-bottom: none; }
+  .prize-medal { font-size: 1.4rem; flex-shrink: 0; }
+  .prize-rank {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    width: 58px;
+    flex-shrink: 0;
+  }
+  .prize-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold-light);
+  }
+
+  /* ---- ACCESS GATE ---- */
+  .access-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background:
+      radial-gradient(circle at top, rgba(212,168,67,0.14), transparent 36%),
+      rgba(5,8,13,0.86);
+    backdrop-filter: blur(10px);
+  }
+  .access-overlay.hidden {
+    display: none;
+  }
+  .access-panel {
+    width: min(100%, 540px);
+    background: linear-gradient(180deg, rgba(22,27,34,0.98), rgba(13,17,23,0.98));
+    border: 1px solid rgba(212,168,67,0.2);
+    border-radius: 24px;
+    box-shadow: 0 18px 70px rgba(0,0,0,0.55);
+    padding: 28px;
+  }
+  .access-kicker {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    background: rgba(212,168,67,0.12);
+    border: 1px solid rgba(212,168,67,0.24);
+    border-radius: 999px;
+    padding: 6px 12px;
+    margin-bottom: 16px;
+  }
+  .access-panel h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .access-panel p {
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .access-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .access-input {
+    flex: 1;
+    min-width: 0;
+    background: var(--dark3);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 15px 16px;
+    color: var(--text);
+    font-size: 1rem;
+    letter-spacing: 0.35em;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+  .access-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,168,67,0.12);
+  }
+  .access-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--dark);
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+  }
+  .access-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(212,168,67,0.28);
+  }
+  .access-feedback {
+    min-height: 24px;
+    margin: 10px 0 0;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .access-feedback.error { color: #ffb6ae; }
+  .access-feedback.success { color: #7ee787; }
+  .admin-tools {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: none;
+  }
+  .admin-tools.visible { display: block; }
+  .admin-tools h3 {
+    font-size: 0.9rem;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+  }
+  .admin-tools .admin-grid {
+    display: grid;
+    gap: 10px;
+  }
+  .admin-tools .admin-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,168,67,0.12);
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .admin-tools .admin-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+  .code-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(212,168,67,0.12);
+    color: var(--gold-light);
+    border: 1px solid rgba(212,168,67,0.2);
+    font-size: 1.08rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+  }
+  .admin-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .admin-link {
+    color: var(--gold-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  /* ---- SESSION META ---- */
+  .session-meta {
+    display: grid;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto 30px;
+  }
+  .session-meta-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,168,67,0.16);
+  }
+  .session-meta-label {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .session-meta-value {
+    color: var(--gold-light);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: right;
+  }
+  .session-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
+
+<div id="accessGate" class="access-overlay">
+  <div class="access-panel">
+    <div class="access-kicker">Zugangscode</div>
+    <h2>Quiz freischalten</h2>
+    <p>Gib einen 6-stelligen Einmalcode ein, um das Jubiläumsquiz zu starten. Der Code-Pool wird über <strong>access-codes.json</strong> im Repository verwaltet.</p>
+    <div class="access-row">
+      <input id="accessCodeInput" class="access-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" aria-label="Zugangscode eingeben">
+      <button class="access-btn" id="accessSubmitBtn" type="button">Freischalten</button>
+    </div>
+    <div class="access-feedback" id="accessFeedback">Der Code wird in diesem Browser nur einmal akzeptiert.</div>
+
+    <div class="admin-tools" id="adminTools">
+      <h3>Admin-Werkzeuge</h3>
+      <div class="admin-grid">
+        <div class="admin-card">
+          <div class="admin-label">Code-Pool</div>
+          <div class="code-pill" id="adminPoolCount">0 Codes</div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-label">Pool erzeugen</div>
+          <div class="admin-actions">
+            <button class="access-btn" id="generatePoolBtn" type="button">700 Codes generieren</button>
+            <button class="access-btn" id="copyCodeBtn" type="button">Nächsten Code kopieren</button>
+            <button class="access-btn" id="downloadCodeBtn" type="button">JSON herunterladen</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-label">Hinweis</div>
+          <div style="color: var(--text-muted); line-height: 1.5; font-size: 0.92rem;">
+            Nach dem Generieren die Datei <strong>access-codes.json</strong> im Repository mit dem neuen Pool aktualisieren, damit GitHub Pages denselben Code lädt.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="container">
   <div class="header">
@@ -502,6 +769,26 @@
   <div id="welcomeScreen" class="card welcome">
     <p>Teste dein Wissen über die Heimatländer unserer Schülerinnen und Schüler. <br><strong>12 Fragen</strong> erwarten dich – darunter auch 3 Schätzfragen rund um unsere BES!</p>
     <div class="country-chips" id="countryChips"></div>
+
+    <div class="prizes-box">
+      <div class="prizes-title">🏆 Zu gewinnen</div>
+      <div class="prize-item">
+        <span class="prize-medal">🥇</span>
+        <span class="prize-rank">1. Platz</span>
+        <span class="prize-value">20 € Cafeteria-Gutschein</span>
+      </div>
+      <div class="prize-item">
+        <span class="prize-medal">🥈</span>
+        <span class="prize-rank">2. Platz</span>
+        <span class="prize-value">15 € Cafeteria-Gutschein</span>
+      </div>
+      <div class="prize-item">
+        <span class="prize-medal">🥉</span>
+        <span class="prize-rank">3. Platz</span>
+        <span class="prize-value">10 € Cafeteria-Gutschein</span>
+      </div>
+    </div>
+
     <button class="start-btn" onclick="startQuiz()">Quiz starten 🚀</button>
   </div>
 
@@ -537,6 +824,17 @@
       <div class="score-max" id="scoreMax"></div>
       <div class="score-bar-wrap"><div class="score-bar-fill" id="scoreBarFill"></div></div>
       <div class="score-message" id="scoreMessage"></div>
+      <div class="session-meta">
+        <div class="session-meta-row">
+          <span class="session-meta-label">Verwendeter Code</span>
+          <span class="session-meta-value" id="sessionCodeUsed">------</span>
+        </div>
+        <div class="session-meta-row">
+          <span class="session-meta-label">Benötigte Zeit</span>
+          <span class="session-meta-value" id="sessionTimeUsed">00:00 min</span>
+        </div>
+      </div>
+      <div class="session-note">Bitte als Nachweis von der Seite einen Screenshot machen.</div>
       <button class="restart-btn" onclick="restartQuiz()">🔄 Nochmal spielen</button>
     </div>
     <div class="review-section" id="reviewSection">
@@ -753,11 +1051,37 @@ const QUESTION_POOL = [
 // ============================================================
 // QUIZ STATE
 // ============================================================
+const ACCESS_CODES_FILE = 'access-codes.json';
+const ACCESS_LEGACY_FILE = 'access-code.json';
+const ACCESS_SESSION_KEY = 'besQuizUnlocked';
+const ACCESS_SESSION_CODE_KEY = 'besQuizSessionCode';
+const ACCESS_SESSION_STARTED_KEY = 'besQuizSessionStartedAt';
+const ACCESS_USED_CODES_KEY = 'besQuizUsedCodes';
+const ADMIN_MODE = new URLSearchParams(window.location.search).has('admin');
+
 let questions = [];
 let currentIdx = 0;
 let score = 0;
 let answers = [];
 let answered = false;
+let accessCodes = [];
+let accessCode = '';
+let accessReady = false;
+let quizStartedAt = 0;
+let lastSessionCode = '';
+
+function readUsedCodes() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ACCESS_USED_CODES_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed.map(normalizeAccessCode).filter(Boolean) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveUsedCodes(usedCodes) {
+  localStorage.setItem(ACCESS_USED_CODES_KEY, JSON.stringify([...new Set(usedCodes)].sort()));
+}
 
 function shuffle(arr) {
   let a = [...arr];
@@ -784,11 +1108,207 @@ function populateChips() {
   });
 }
 
+function normalizeAccessCode(value) {
+  return String(value || '').replace(/\D/g, '').slice(0, 6);
+}
+
+function randomAccessCode() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+function generateAccessPool(size = 700) {
+  const pool = new Set();
+  while (pool.size < size) {
+    pool.add(randomAccessCode());
+  }
+  return [...pool];
+}
+
+function getUsedCodeSet() {
+  return new Set(readUsedCodes());
+}
+
+function setAccessFeedback(message, kind = '') {
+  const feedback = document.getElementById('accessFeedback');
+  feedback.textContent = message;
+  feedback.className = `access-feedback${kind ? ` ${kind}` : ''}`;
+}
+
+function renderAdminPoolStats() {
+  const display = document.getElementById('adminPoolCount');
+  if (!display) return;
+  const usedCodes = getUsedCodeSet();
+  const availableCount = accessCodes.filter(code => !usedCodes.has(code)).length;
+  display.textContent = `${availableCount} von ${accessCodes.length} Codes frei`;
+}
+
+function updateAdminSelection() {
+  const usedCodes = getUsedCodeSet();
+  accessCode = accessCodes.find(code => !usedCodes.has(code)) || '';
+  const copyBtn = document.getElementById('copyCodeBtn');
+  if (copyBtn) {
+    copyBtn.disabled = !accessCode;
+    copyBtn.textContent = accessCode ? 'Nächsten Code kopieren' : 'Keine Codes frei';
+  }
+  renderAdminPoolStats();
+  return accessCode;
+}
+
+function buildAccessPayload() {
+  return JSON.stringify({
+    title: 'BES Jubiläumsquiz Zugangspool',
+    updatedAt: new Date().toISOString(),
+    codes: accessCodes
+  }, null, 2);
+}
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const temp = document.createElement('textarea');
+  temp.value = text;
+  temp.style.position = 'fixed';
+  temp.style.opacity = '0';
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand('copy');
+  document.body.removeChild(temp);
+}
+
+function downloadAccessJson() {
+  const blob = new Blob([buildAccessPayload()], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = ACCESS_CODES_FILE;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function loadAccessCodes() {
+  try {
+    const response = await fetch(ACCESS_CODES_FILE, { cache: 'no-store' });
+    if (response.ok) {
+      const data = await response.json();
+      const list = Array.isArray(data.codes) ? data.codes : Array.isArray(data) ? data : [];
+      accessCodes = [...new Set(list.map(normalizeAccessCode).filter(Boolean))];
+    }
+  } catch (error) {
+    accessCodes = [];
+  }
+
+  if (!accessCodes.length) {
+    try {
+      const fallback = await fetch(ACCESS_LEGACY_FILE, { cache: 'no-store' });
+      if (fallback.ok) {
+        const data = await fallback.json();
+        const legacyCode = normalizeAccessCode(data.code);
+        if (legacyCode) accessCodes = [legacyCode];
+      }
+    } catch (error) {
+      accessCodes = [];
+    }
+  }
+
+  if (!accessCodes.length) {
+    accessCodes = generateAccessPool(700);
+  }
+
+  accessReady = true;
+  updateAdminSelection();
+  setAccessFeedback('Bitte gib einen 6-stelligen Einmalcode ein.');
+}
+
+function unlockAccess(code) {
+  sessionStorage.setItem(ACCESS_SESSION_KEY, '1');
+  if (code) sessionStorage.setItem(ACCESS_SESSION_CODE_KEY, code);
+  document.getElementById('accessGate').classList.add('hidden');
+  setAccessFeedback('Quiz freigeschaltet.', 'success');
+}
+
+function checkAccess() {
+  if (!accessReady) return;
+  const entered = normalizeAccessCode(document.getElementById('accessCodeInput').value);
+  if (entered.length !== 6) {
+    setAccessFeedback('Bitte genau 6 Ziffern eingeben.', 'error');
+    return;
+  }
+
+  if (!accessCodes.includes(entered)) {
+    setAccessFeedback('Dieser Code ist nicht gültig.', 'error');
+    return;
+  }
+
+  const usedCodes = getUsedCodeSet();
+  if (usedCodes.has(entered)) {
+    setAccessFeedback('Dieser Code wurde bereits verwendet. Bitte einen neuen Code nutzen.', 'error');
+    return;
+  }
+
+  usedCodes.add(entered);
+  saveUsedCodes(usedCodes);
+  accessCode = entered;
+  renderAdminPoolStats();
+  unlockAccess(entered);
+}
+
+async function generateNewAccessPool() {
+  accessCodes = generateAccessPool(700);
+  updateAdminSelection();
+  document.getElementById('accessCodeInput').value = '';
+  setAccessFeedback('Neuer 700er-Codepool erzeugt. JSON herunterladen und ins Repository übernehmen.', 'success');
+}
+
+async function copyCurrentAccessCode() {
+  const nextFreeCode = updateAdminSelection();
+  if (!nextFreeCode) {
+    setAccessFeedback('Keine freien Codes mehr verfügbar.', 'error');
+    return;
+  }
+  await copyText(nextFreeCode);
+  setAccessFeedback(`Code ${nextFreeCode} in die Zwischenablage kopiert.`, 'success');
+}
+
+function formatElapsedTime(ms) {
+  const totalSeconds = Math.max(0, Math.round(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} min`;
+}
+
+function initAccessControls() {
+  document.getElementById('accessSubmitBtn').addEventListener('click', checkAccess);
+  document.getElementById('accessCodeInput').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') checkAccess();
+  });
+
+  if (ADMIN_MODE) {
+    document.getElementById('adminTools').classList.add('visible');
+    document.getElementById('generatePoolBtn').addEventListener('click', generateNewAccessPool);
+    document.getElementById('copyCodeBtn').addEventListener('click', copyCurrentAccessCode);
+    document.getElementById('downloadCodeBtn').addEventListener('click', downloadAccessJson);
+  }
+}
+
 function startQuiz() {
+  if (!sessionStorage.getItem(ACCESS_SESSION_KEY)) {
+    document.getElementById('accessGate').classList.remove('hidden');
+    setAccessFeedback('Bitte zuerst den Zugangscode eingeben.', 'error');
+    document.getElementById('accessCodeInput').focus();
+    return;
+  }
+
+  lastSessionCode = sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || accessCode || '';
   questions = buildQuestions();
   currentIdx = 0;
   score = 0;
   answers = [];
+  quizStartedAt = performance.now();
+  sessionStorage.setItem(ACCESS_SESSION_STARTED_KEY, String(quizStartedAt));
   document.getElementById('welcomeScreen').style.display = 'none';
   document.getElementById('quizScreen').style.display = 'block';
   renderQuestion();
@@ -919,6 +1439,8 @@ function showResult() {
   document.getElementById('scoreBig').textContent = score;
   document.getElementById('scoreMax').textContent = `von ${total} möglichen Punkten`;
   document.getElementById('scoreMessage').textContent = message;
+  document.getElementById('sessionCodeUsed').textContent = lastSessionCode || sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || '------';
+  document.getElementById('sessionTimeUsed').textContent = formatElapsedTime(performance.now() - quizStartedAt);
 
   const sc = document.getElementById('scoreCard');
   sc.style.display = 'block';
@@ -954,11 +1476,28 @@ function restartQuiz() {
   document.getElementById('scoreCard').style.display = 'none';
   document.getElementById('scoreBarFill').style.width = '0%';
   document.getElementById('reviewItems').innerHTML = '';
-  startQuiz();
+  sessionStorage.removeItem(ACCESS_SESSION_KEY);
+  sessionStorage.removeItem(ACCESS_SESSION_CODE_KEY);
+  sessionStorage.removeItem(ACCESS_SESSION_STARTED_KEY);
+  lastSessionCode = '';
+  quizStartedAt = 0;
+  document.getElementById('welcomeScreen').style.display = 'block';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('accessGate').classList.remove('hidden');
+  document.getElementById('accessCodeInput').value = '';
+  setAccessFeedback('Für einen neuen Versuch brauchst du einen neuen Code.', 'error');
 }
 
 // INIT
+initAccessControls();
 populateChips();
+loadAccessCodes().then(() => {
+  if (sessionStorage.getItem(ACCESS_SESSION_KEY)) {
+    document.getElementById('accessGate').classList.add('hidden');
+  } else {
+    document.getElementById('accessGate').classList.remove('hidden');
+  }
+});
 </script>
 </body>
 </html>
