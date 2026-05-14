@@ -1,6 +1,4 @@
-﻿DELETE FROM quiz_access_codes;
-
-INSERT INTO quiz_access_codes (code, is_used) VALUES('265554', 0),
+﻿INSERT INTO quiz_access_codes (code, is_used) VALUES('265554', 0),
 ('138064', 0),
 ('163359', 0),
 ('821472', 0),
