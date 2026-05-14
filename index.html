@@ -1089,8 +1089,10 @@ const ACCESS_SESSION_STATUS_KEY = 'besQuizSessionStatus';
 const ACCESS_USED_CODES_KEY = 'besQuizUsedCodes';
 const ACCESS_CLIENT_ID_KEY = 'besQuizClientId';
 const ACCESS_SESSION_USER_NAME_KEY = 'besQuizSessionUserName';
+const QUIZ_WORKER_BASE_URL = 'https://db1quiz.maximilianhergert29.workers.dev';
 const REMOTE_CODE_VALIDATION = true;
-const CODE_CLAIM_ENDPOINT = 'https://db1quiz.maximilianhergert29.workers.dev/claim';
+const CODE_CLAIM_ENDPOINT = `${QUIZ_WORKER_BASE_URL}/claim`;
+const QUIZ_SUBMIT_ENDPOINT = `${QUIZ_WORKER_BASE_URL}/submit`;
 // Admin mode activated via local password entry (no URL parameter)
 let ADMIN_MODE = false;
 const ADMIN_PASSWORD = '2006';
@@ -1108,6 +1110,7 @@ let accessCode = '';
 let accessReady = false;
 let quizStartedAt = 0;
 let lastSessionCode = '';
+let quizResultSubmitted = false;
 
 function readUsedCodes() {
   try {
@@ -1131,6 +1134,21 @@ function getClientId() {
   const created = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   localStorage.setItem(ACCESS_CLIENT_ID_KEY, created);
   return created;
+}
+
+function getSessionUserName() {
+  return String(sessionStorage.getItem(ACCESS_SESSION_USER_NAME_KEY) || '').slice(0, 120) || null;
+}
+
+function getQuizStartMs() {
+  const storedStart = Number(sessionStorage.getItem(ACCESS_SESSION_STARTED_KEY));
+  if (Number.isFinite(storedStart) && storedStart > 0) return storedStart;
+  if (Number.isFinite(quizStartedAt) && quizStartedAt > 0) return quizStartedAt;
+  return Date.now();
+}
+
+function getQuizDurationMs() {
+  return Math.max(0, Date.now() - getQuizStartMs());
 }
 
 async function claimCodeRemotely(code) {
@@ -1335,6 +1353,38 @@ function unlockAccess(code) {
   setAccessFeedback('Quiz freigeschaltet.', 'success');
 }
 
+async function submitQuizResults() {
+  if (quizResultSubmitted) return;
+  quizResultSubmitted = true;
+
+  const payload = {
+    action: 'submit',
+    code: lastSessionCode || sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || accessCode || '',
+    clientId: getClientId(),
+    client_id: getClientId(),
+    user_name: getSessionUserName(),
+    score,
+    total: questions.length,
+    started_at: new Date(getQuizStartMs()).toISOString(),
+    finished_at: new Date().toISOString(),
+    duration_ms: getQuizDurationMs(),
+    answers
+  };
+
+  try {
+    await fetch(QUIZ_SUBMIT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload),
+      keepalive: true
+    });
+  } catch (error) {
+    quizResultSubmitted = false;
+  }
+}
+
 function checkAccess() {
   if (!accessReady) return;
 
@@ -1487,7 +1537,8 @@ function startQuiz() {
   currentIdx = 0;
   score = 0;
   answers = [];
-  quizStartedAt = performance.now();
+  quizResultSubmitted = false;
+  quizStartedAt = Date.now();
   sessionStorage.setItem(ACCESS_SESSION_STARTED_KEY, String(quizStartedAt));
   document.getElementById('welcomeScreen').style.display = 'none';
   document.getElementById('quizScreen').style.display = 'block';
@@ -1611,7 +1662,7 @@ function showResult() {
     notice.style.display = 'block';
   }
 
-  // Do not send answers or score to any remote endpoint; keep results client-side only.
+  void submitQuizResults();
 }
 
 function restartQuiz() {
@@ -1626,6 +1677,7 @@ function restartQuiz() {
   sessionStorage.removeItem(ACCESS_SESSION_STATUS_KEY);
   lastSessionCode = '';
   quizStartedAt = 0;
+  quizResultSubmitted = false;
   document.getElementById('welcomeScreen').style.display = 'block';
   document.getElementById('quizScreen').style.display = 'none';
   document.getElementById('accessGate').classList.remove('hidden');

@@ -27,27 +27,19 @@ export default {
       }
 
       const claimResult = await env.DB.prepare(
-        `UPDATE quiz_access_codes
-         SET is_used = 1,
-             used_at = datetime('now'),
-             used_by_client_id = ?
-         WHERE code = ? AND is_used = 0`
+        `INSERT INTO quiz_access_codes (code, is_used, used_at, used_by_client_id)
+         VALUES (?, 1, datetime('now'), ?)
+         ON CONFLICT(code) DO UPDATE SET
+           is_used = 1,
+           used_at = datetime('now'),
+           used_by_client_id = excluded.used_by_client_id
+         WHERE quiz_access_codes.is_used = 0`
       )
-        .bind(clientId || null, code)
+        .bind(code, clientId || null)
         .run();
 
       if ((claimResult.meta?.changes || 0) > 0) {
         return json({ ok: true }, 200);
-      }
-
-      const exists = await env.DB.prepare(
-        `SELECT code, is_used FROM quiz_access_codes WHERE code = ? LIMIT 1`
-      )
-        .bind(code)
-        .first();
-
-      if (!exists) {
-        return json({ ok: false, message: 'Dieser Code ist nicht gueltig.' }, 404);
       }
 
       return json({ ok: false, message: 'Dieser Code wurde bereits verwendet.' }, 409);
@@ -108,7 +100,7 @@ export default {
       const rows = await env.DB.prepare(
         `SELECT id, code, client_id, user_name, score, total, duration_ms, started_at, finished_at, created_at
          FROM quiz_attempts
-         ORDER BY score DESC, duration_ms ASC, created_at ASC
+         ORDER BY score DESC, COALESCE(duration_ms, 2147483647) ASC, created_at ASC
          LIMIT ?`
       )
         .bind(limit)

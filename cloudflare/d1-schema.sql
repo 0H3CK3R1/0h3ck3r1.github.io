@@ -30,6 +30,9 @@ CREATE INDEX IF NOT EXISTS idx_quiz_attempts_code
 CREATE INDEX IF NOT EXISTS idx_quiz_attempts_score_duration
   ON quiz_attempts (score DESC, duration_ms ASC);
 
+CREATE INDEX IF NOT EXISTS idx_quiz_attempts_ranking
+  ON quiz_attempts (score DESC, duration_ms ASC, created_at ASC);
+
 CREATE TABLE IF NOT EXISTS quiz_attempt_answers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   attempt_id INTEGER NOT NULL,
