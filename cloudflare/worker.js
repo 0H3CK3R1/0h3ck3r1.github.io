@@ -10,7 +10,7 @@ export default {
 
     if (isMaintenanceEnabled(env)) {
       return new Response(
-        JSON.stringify({ ok: false, message: 'Service ist voruebergehend offline.' }),
+        JSON.stringify({ ok: false, message: 'Service ist vorübergehend im Wartungsmodus.' }),
         {
           status: 503,
           headers: {
