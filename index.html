@@ -1072,6 +1072,7 @@ const ACCESS_SESSION_STARTED_KEY = 'besQuizSessionStartedAt';
 const ACCESS_SESSION_STATUS_KEY = 'besQuizSessionStatus';
 const ACCESS_USED_CODES_KEY = 'besQuizUsedCodes';
 const ACCESS_CLIENT_ID_KEY = 'besQuizClientId';
+const ACCESS_SESSION_USER_NAME_KEY = 'besQuizSessionUserName';
 const REMOTE_CODE_VALIDATION = true;
 const CODE_CLAIM_ENDPOINT = 'https://db1quiz.maximilianhergert29.workers.dev/claim';
 // Admin mode activated via local password entry (no URL parameter)
@@ -1456,6 +1457,15 @@ function startQuiz() {
   }
 
   lastSessionCode = sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || accessCode || '';
+  // Optional: ask for a name to attribute the attempt (can be left empty)
+  if (!sessionStorage.getItem(ACCESS_SESSION_USER_NAME_KEY)) {
+    try {
+      const name = prompt('Name (optional, für Highscore sichtbar)') || '';
+      if (name) sessionStorage.setItem(ACCESS_SESSION_USER_NAME_KEY, String(name).slice(0,120));
+    } catch (e) {
+      // ignore
+    }
+  }
   questions = buildQuestions();
   currentIdx = 0;
   score = 0;
@@ -1544,18 +1554,19 @@ function selectAnswer(chosen, correct, fact, opts) {
   btns.forEach(btn => {
     btn.disabled = true;
     const text = btn.querySelector('span:last-child').textContent;
-    if (text === correct) btn.classList.add('correct');
-    else if (text === chosen && !isCorrect) btn.classList.add('wrong');
+    // Do NOT reveal the correct answer visually. Only mark the chosen button if it was wrong.
+    if (text === chosen && !isCorrect) btn.classList.add('wrong');
   });
 
   // Feedback
   const fb = document.getElementById('feedback');
   if (isCorrect) {
     fb.className = 'feedback correct-fb';
-    fb.innerHTML = `<span class="fb-icon">✅</span><strong>Richtig!</strong> ${fact}`;
+    fb.innerHTML = `<span class="fb-icon">✅</span><strong>Richtig!</strong>`;
   } else {
     fb.className = 'feedback wrong-fb';
-    fb.innerHTML = `<span class="fb-icon">❌</span><strong>Leider falsch.</strong> Die richtige Antwort ist: <strong>${correct}</strong>. ${fact}`;
+    // Do NOT display the correct answer; acknowledge receipt only.
+    fb.innerHTML = `<span class="fb-icon">❌</span><strong>Antwort gespeichert.</strong>`;
   }
   fb.style.display = 'block';
 
@@ -1603,7 +1614,7 @@ function showResult() {
     document.getElementById('scoreBarFill').style.width = pct+'%';
   }, 100);
 
-  // Review
+  // Review (do not reveal the correct answers here)
   const reviewWrap = document.getElementById('reviewItems');
   reviewWrap.innerHTML = '';
   answers.forEach(a => {
@@ -1616,12 +1627,38 @@ function showResult() {
       <div>
         <div class="review-q">${emoji2} ${a.country} · ${a.question}</div>
         <div class="review-a ${a.isCorrect ? 'r-correct' : 'r-wrong'}">${a.chosen}</div>
-        ${!a.isCorrect ? `<div class="review-correct-label">Richtig: ${a.correct}</div>` : ''}
       </div>`;
     reviewWrap.appendChild(item);
   });
 
   document.getElementById('reviewSection').style.display = 'block';
+
+  // Send results to server (best-effort)
+  (async function submitResultToServer() {
+    if (!hasRemoteValidationConfig()) return;
+    const payload = {
+      action: 'submit',
+      code: lastSessionCode || sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || null,
+      clientId: getClientId(),
+      user_name: sessionStorage.getItem(ACCESS_SESSION_USER_NAME_KEY) || null,
+      score: score,
+      total: questions.length,
+      started_at: sessionStorage.getItem(ACCESS_SESSION_STARTED_KEY) || null,
+      finished_at: new Date().toISOString(),
+      duration_ms: Math.max(0, Math.round(performance.now() - quizStartedAt)),
+      answers: answers.map(a => ({ question: a.question, chosen: a.chosen, isCorrect: a.isCorrect }))
+    };
+
+    try {
+      await fetch(CODE_CLAIM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) {
+      // ignore network errors
+    }
+  })();
 }
 
 function restartQuiz() {
