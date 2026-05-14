@@ -111,6 +111,7 @@
     font-weight: 500;
     letter-spacing: 0.5px;
   }
+  .progress-info #scoreText { display: none; }
   .progress-bar-bg {
     background: var(--dark3);
     border-radius: 10px;
@@ -850,6 +851,7 @@
       <div class="session-note">Bitte als Nachweis von der Seite einen Screenshot machen.</div>
       <button class="restart-btn" onclick="restartQuiz()">🔄 Nochmal spielen</button>
     </div>
+    <div id="completionNotice" style="display:none; text-align:center; padding:36px 12px; color:var(--text-muted);">Quiz beendet. Danke fürs Mitmachen.</div>
     <div class="review-section" id="reviewSection">
       <div class="divider"><div class="divider-line"></div><div class="divider-icon">✦</div><div class="divider-line"></div></div>
       <div class="review-title">Deine Antworten im Überblick</div>
@@ -1555,20 +1557,13 @@ function selectAnswer(chosen, correct, fact, opts) {
     btn.disabled = true;
     const text = btn.querySelector('span:last-child').textContent;
     // Do NOT reveal the correct answer visually. Only mark the chosen button if it was wrong.
-    if (text === chosen && !isCorrect) btn.classList.add('wrong');
+    // No visual feedback to the user: do not add classes for correct/wrong.
   });
 
   // Feedback
   const fb = document.getElementById('feedback');
-  if (isCorrect) {
-    fb.className = 'feedback correct-fb';
-    fb.innerHTML = `<span class="fb-icon">✅</span><strong>Richtig!</strong>`;
-  } else {
-    fb.className = 'feedback wrong-fb';
-    // Do NOT display the correct answer; acknowledge receipt only.
-    fb.innerHTML = `<span class="fb-icon">❌</span><strong>Antwort gespeichert.</strong>`;
-  }
-  fb.style.display = 'block';
+  // Intentionally do not show any feedback to the user. Feedback element remains hidden.
+  fb.style.display = 'none';
 
   document.getElementById('scoreText').textContent = `${score} Punkt${score!==1?'e':''}`;
   document.getElementById('nextBtn').style.display = 'block';
@@ -1584,81 +1579,22 @@ function nextQuestion() {
 }
 
 function showResult() {
+  // End quiz without showing any score or review to the user.
   document.getElementById('quizScreen').style.display = 'none';
   const rs = document.getElementById('resultScreen');
   rs.style.display = 'block';
   sessionStorage.setItem(ACCESS_SESSION_STATUS_KEY, 'completed');
 
-  const total = questions.length;
-  const pct = Math.round((score/total)*100);
+  // Keep score only internally; do not render it to the user.
+  // Hide any detailed UI elements if present.
+  try { document.getElementById('scoreCard').style.display = 'none'; } catch(e) {}
+  try { document.getElementById('reviewSection').style.display = 'none'; } catch(e) {}
 
-  let emoji, title, message;
-  if (pct === 100) { emoji='🏆'; title='Perfekt!'; message='Beeindruckend! Du kennst alle Länder unserer Schülerinnen und Schüler.'; }
-  else if (pct >= 77) { emoji='🌟'; title='Ausgezeichnet!'; message='Klasse! Du weißt wirklich viel über die Herkunftsländer unserer Gemeinschaft.'; }
-  else if (pct >= 54) { emoji='👍'; title='Gut gemacht!'; message='Nicht schlecht! Du hast schon gutes Wissen über unsere Länder.'; }
-  else if (pct >= 31) { emoji='📚'; title='Weiter lernen!'; message='Du hast die Grundlagen. Mit ein bisschen mehr Übung wirst du zum Experten!'; }
-  else { emoji='🌍'; title='Übung macht den Meister!'; message='Jede Reise beginnt mit einem ersten Schritt. Versuche es noch einmal!'; }
+  // Show a neutral completion notice only.
+  const notice = document.getElementById('completionNotice');
+  if (notice) notice.style.display = 'block';
 
-  document.getElementById('scoreEmoji').textContent = emoji;
-  document.getElementById('scoreTitle').textContent = title;
-  document.getElementById('scoreBig').textContent = score;
-  document.getElementById('scoreMax').textContent = `von ${total} möglichen Punkten`;
-  document.getElementById('scoreMessage').textContent = message;
-  document.getElementById('sessionCodeUsed').textContent = lastSessionCode || sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || '------';
-  document.getElementById('sessionTimeUsed').textContent = formatElapsedTime(performance.now() - quizStartedAt);
-
-  const sc = document.getElementById('scoreCard');
-  sc.style.display = 'block';
-
-  setTimeout(() => {
-    document.getElementById('scoreBarFill').style.width = pct+'%';
-  }, 100);
-
-  // Review (do not reveal the correct answers here)
-  const reviewWrap = document.getElementById('reviewItems');
-  reviewWrap.innerHTML = '';
-  answers.forEach(a => {
-    const item = document.createElement('div');
-    item.className = 'review-item';
-    const countryObj = COUNTRIES.find(c => c.name === a.country);
-    const emoji2 = countryObj ? countryObj.emoji : '🌍';
-    item.innerHTML = `
-      <div class="review-icon">${a.isCorrect ? '✅' : '❌'}</div>
-      <div>
-        <div class="review-q">${emoji2} ${a.country} · ${a.question}</div>
-        <div class="review-a ${a.isCorrect ? 'r-correct' : 'r-wrong'}">${a.chosen}</div>
-      </div>`;
-    reviewWrap.appendChild(item);
-  });
-
-  document.getElementById('reviewSection').style.display = 'block';
-
-  // Send results to server (best-effort)
-  (async function submitResultToServer() {
-    if (!hasRemoteValidationConfig()) return;
-    const payload = {
-      action: 'submit',
-      code: lastSessionCode || sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || null,
-      clientId: getClientId(),
-      user_name: sessionStorage.getItem(ACCESS_SESSION_USER_NAME_KEY) || null,
-      score: score,
-      total: questions.length,
-      started_at: sessionStorage.getItem(ACCESS_SESSION_STARTED_KEY) || null,
-      finished_at: new Date().toISOString(),
-      duration_ms: Math.max(0, Math.round(performance.now() - quizStartedAt)),
-      answers: answers.map(a => ({ question: a.question, chosen: a.chosen, isCorrect: a.isCorrect }))
-    };
-
-    try {
-      await fetch(CODE_CLAIM_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    } catch (e) {
-      // ignore network errors
-    }
-  })();
+  // Do not send answers or score to any remote endpoint; keep results client-side only.
 }
 
 function restartQuiz() {
