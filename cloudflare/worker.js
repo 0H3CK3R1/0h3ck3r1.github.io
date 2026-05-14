@@ -26,6 +26,23 @@ export default {
         return json({ ok: false, message: 'Code muss 6-stellig sein.' }, 400);
       }
 
+      const existing = await env.DB.prepare(
+        `SELECT code, is_used
+         FROM quiz_access_codes
+         WHERE code = ?
+         LIMIT 1`
+      )
+        .bind(code)
+        .first();
+
+      if (!existing) {
+        return json({ ok: false, message: 'Dieser Code ist nicht gueltig.' }, 404);
+      }
+
+      if (existing.is_used) {
+        return json({ ok: false, message: 'Dieser Code wurde bereits verwendet.' }, 409);
+      }
+
       const claimResult = await env.DB.prepare(
         `INSERT INTO quiz_access_codes (code, is_used, used_at, used_by_client_id)
          VALUES (?, 1, datetime('now'), ?)

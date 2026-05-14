@@ -1399,11 +1399,6 @@ function checkAccess() {
     return;
   }
 
-  if (!accessCodes.includes(entered)) {
-    setAccessFeedback('Dieser Code ist nicht gültig.', 'error');
-    return;
-  }
-
   if (REMOTE_CODE_VALIDATION) {
     setAccessFeedback('Code wird serverseitig geprüft...');
     claimCodeRemotely(entered)
