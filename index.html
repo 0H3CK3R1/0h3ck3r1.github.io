@@ -262,6 +262,11 @@
     border-color: var(--green);
     background: rgba(46,160,67,0.07);
   }
+  .option-btn.selected {
+    border-color: var(--gold);
+    background: rgba(212,168,67,0.12);
+    transform: translateX(4px);
+  }
   @keyframes pulse-green {
     0%   { box-shadow: 0 0 0 0 rgba(46,160,67,0.5); }
     100% { box-shadow: 0 0 0 12px rgba(46,160,67,0); }
@@ -1097,6 +1102,7 @@ let currentIdx = 0;
 let score = 0;
 let answers = [];
 let answered = false;
+let pendingChoice = null;
 let accessCodes = [];
 let accessCode = '';
 let accessReady = false;
@@ -1532,15 +1538,16 @@ function renderQuestion() {
   optContainer.innerHTML = '';
   const opts = shuffle([q.correct, ...q.wrong]);
   const labels = ['A','B','C','D'];
+  pendingChoice = null;
   opts.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.innerHTML = `<span class="opt-label">${labels[i]}</span><span>${opt}</span>`;
-    btn.onclick = () => selectAnswer(opt, q.correct, q.fact, opts);
+    btn.onclick = () => chooseOption(opt, btn);
     optContainer.appendChild(btn);
   });
 
-  // Hide feedback & next
+  // Hide feedback & next until a selection is made
   const fb = document.getElementById('feedback');
   fb.style.display = 'none';
   fb.className = 'feedback';
@@ -1552,34 +1559,31 @@ function renderQuestion() {
   requestAnimationFrame(() => { card.style.animation = ''; });
 }
 
-function selectAnswer(chosen, correct, fact, opts) {
+function chooseOption(chosen, btn) {
   if (answered) return;
-  answered = true;
-  const isCorrect = chosen === correct;
-  if (isCorrect) score++;
-
-  answers.push({ question: questions[currentIdx].question, country: questions[currentIdx].country, chosen, correct, isCorrect });
-
-  // Style buttons
-  const btns = document.querySelectorAll('.option-btn');
-  btns.forEach(btn => {
-    btn.disabled = true;
-    const text = btn.querySelector('span:last-child').textContent;
-    // Do NOT reveal the correct answer visually. Only mark the chosen button if it was wrong.
-    // No visual feedback to the user: do not add classes for correct/wrong.
-  });
-
-  // Feedback
-  const fb = document.getElementById('feedback');
-  // Intentionally do not show any feedback to the user. Feedback element remains hidden.
-  fb.style.display = 'none';
-
-  document.getElementById('scoreText').textContent = `${score} Punkt${score!==1?'e':''}`;
+  // allow changing selection until Next is pressed
+  document.querySelectorAll('.option-btn.selected').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  pendingChoice = chosen;
+  // show next so user can proceed
   document.getElementById('nextBtn').style.display = 'block';
 }
 
 function nextQuestion() {
+  const q = questions[currentIdx];
+  // require a selection before proceeding
+  if (!pendingChoice) return;
+
+  // finalize
+  answered = true;
+  const isCorrect = pendingChoice === q.correct;
+  if (isCorrect) score++;
+  answers.push({ question: q.question, country: q.country, chosen: pendingChoice, correct: q.correct, isCorrect });
+
+  // advance
   currentIdx++;
+  pendingChoice = null;
+  answered = false;
   if (currentIdx >= questions.length) {
     showResult();
   } else {
