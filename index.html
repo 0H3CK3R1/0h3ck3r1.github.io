@@ -1524,15 +1524,7 @@ function startQuiz() {
   }
 
   lastSessionCode = sessionStorage.getItem(ACCESS_SESSION_CODE_KEY) || accessCode || '';
-  // Optional: ask for a name to attribute the attempt (can be left empty)
-  if (!sessionStorage.getItem(ACCESS_SESSION_USER_NAME_KEY)) {
-    try {
-      const name = prompt('Name (optional, für Highscore sichtbar)') || '';
-      if (name) sessionStorage.setItem(ACCESS_SESSION_USER_NAME_KEY, String(name).slice(0,120));
-    } catch (e) {
-      // ignore
-    }
-  }
+  // Name collection disabled — user_name will not be requested or sent.
   questions = buildQuestions();
   currentIdx = 0;
   score = 0;
