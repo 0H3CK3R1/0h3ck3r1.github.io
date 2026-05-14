@@ -8,6 +8,20 @@ export default {
       return json({ ok: false, message: 'Method not allowed' }, 405);
     }
 
+    if (isMaintenanceEnabled(env)) {
+      return new Response(
+        JSON.stringify({ ok: false, message: 'Service ist voruebergehend offline.' }),
+        {
+          status: 503,
+          headers: {
+            ...corsHeaders(),
+            'Content-Type': 'application/json; charset=utf-8',
+            'Retry-After': '300'
+          }
+        }
+      );
+    }
+
     let body = {};
     try {
       body = await request.json();
@@ -119,6 +133,11 @@ function corsHeaders() {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type'
   };
+}
+
+function isMaintenanceEnabled(env) {
+  const raw = String(env.MAINTENANCE_MODE || '').trim().toLowerCase();
+  return raw === '1' || raw === 'true' || raw === 'on';
 }
 
 function json(payload, status = 200) {
