@@ -62,7 +62,7 @@ export default {
       return json({ ok: false, message: 'Dieser Code wurde bereits verwendet.' }, 409);
     }
 
-    // Submit quiz results and answers
+    // Submit quiz result summary
     if (action === 'submit') {
       const code = String(body.code || '').replace(/\D/g, '').slice(0, 6) || null;
       const clientId = String(body.clientId || body.client_id || '') || null;
@@ -72,7 +72,6 @@ export default {
       const startedAt = body.started_at || null;
       const finishedAt = body.finished_at || null;
       const durationMs = Number.isFinite(Number(body.duration_ms)) ? Number(body.duration_ms) : null;
-      const answers = Array.isArray(body.answers) ? body.answers : [];
 
       if (score === null || total === null) {
         return json({ ok: false, message: 'Score und Total sind erforderlich.' }, 400);
@@ -90,22 +89,6 @@ export default {
 
       if (!attemptId) {
         return json({ ok: false, message: 'Konnte Versuch nicht anlegen.' }, 500);
-      }
-
-      // Prepare insert statement for answers and run in a loop (single prepared statement)
-      const insertAns = env.DB.prepare(
-        `INSERT INTO quiz_attempt_answers (attempt_id, question, chosen, is_correct) VALUES (?, ?, ?, ?)`
-      );
-
-      for (const a of answers) {
-        const q = String(a.question || '').slice(0, 1000);
-        const chosen = a.chosen ? String(a.chosen).slice(0, 500) : null;
-        const isCorrect = a.isCorrect ? 1 : 0;
-        try {
-          await insertAns.bind(attemptId, q, chosen, isCorrect).run();
-        } catch (e) {
-          // continue on individual answer failures
-        }
       }
 
       return json({ ok: true, attempt_id: attemptId }, 200);

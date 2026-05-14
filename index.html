@@ -1102,7 +1102,6 @@ const ADMIN_SHOW_PASSWORD_FIELD = new URLSearchParams(window.location.search).ge
 let questions = [];
 let currentIdx = 0;
 let score = 0;
-let answers = [];
 let answered = false;
 let pendingChoice = null;
 let accessCodes = [];
@@ -1367,8 +1366,7 @@ async function submitQuizResults() {
     total: questions.length,
     started_at: new Date(getQuizStartMs()).toISOString(),
     finished_at: new Date().toISOString(),
-    duration_ms: getQuizDurationMs(),
-    answers
+    duration_ms: getQuizDurationMs()
   };
 
   try {
@@ -1523,7 +1521,6 @@ function startQuiz() {
   questions = buildQuestions();
   currentIdx = 0;
   score = 0;
-  answers = [];
   quizResultSubmitted = false;
   quizStartedAt = Date.now();
   sessionStorage.setItem(ACCESS_SESSION_STARTED_KEY, String(quizStartedAt));
@@ -1616,7 +1613,6 @@ function nextQuestion() {
   answered = true;
   const isCorrect = pendingChoice === q.correct;
   if (isCorrect) score++;
-  answers.push({ question: q.question, country: q.country, chosen: pendingChoice, correct: q.correct, isCorrect });
 
   // advance
   currentIdx++;
