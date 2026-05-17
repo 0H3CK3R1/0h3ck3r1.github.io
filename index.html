@@ -710,6 +710,11 @@
     line-height: 1.5;
     margin-top: 10px;
   }
+  .important-note {
+    color: var(--red);
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
 </style>
 </head>
 <body>
@@ -853,7 +858,7 @@
           <span class="session-meta-value" id="sessionTimeUsed">00:00 min</span>
         </div>
       </div>
-      <div class="session-note">Bitte als Nachweis von der Seite einen Screenshot machen.</div>
+      <div class="session-note important-note">Bitte als Nachweis von der Seite einen Screenshot machen.</div>
       <button class="restart-btn" onclick="restartQuiz()">🔄 Nochmal spielen</button>
     </div>
     <div id="completionNotice" style="display:none; text-align:center; padding:28px 12px; color:var(--text-muted);">
@@ -864,7 +869,7 @@
           <span class="session-meta-value" id="completionCode">------</span>
         </div>
       </div>
-      <div class="session-note" style="margin-top:12px;">Bitte als Nachweis von der Seite einen Screenshot machen, falls du gewonnen hast.</div>
+      <div class="session-note important-note" style="margin-top:12px;">Bitte als Nachweis von der Seite einen Screenshot machen, falls du gewonnen hast.</div>
     </div>
     <div class="review-section" id="reviewSection">
       <div class="divider"><div class="divider-line"></div><div class="divider-icon">✦</div><div class="divider-line"></div></div>
